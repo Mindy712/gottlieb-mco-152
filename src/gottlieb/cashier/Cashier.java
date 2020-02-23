@@ -4,7 +4,7 @@ public class Cashier
 {
     Cash cashRegister = new Cash();
 
-    public Cash pay(double price, Cash payment)
+    public Cash pay(double price, Cash payment) throws NotEnoughChangeException
     {
         updateRegister(payment);
 
@@ -96,11 +96,13 @@ public class Cashier
                 change.addPennies(1);
                 remaining -= 0.01;
                 cashRegister.addPennies(-1);
-                if (remaining == 0.00)
-                {
-                    break;
-                }
             }
+
+        }
+
+        if (remaining != 0.00)
+        {
+            throw new NotEnoughChangeException();
         }
 
         return change;
