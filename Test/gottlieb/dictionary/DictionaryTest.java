@@ -4,7 +4,7 @@ import org.junit.Test;
 
 import java.io.FileNotFoundException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class DictionaryTest
 {
@@ -16,10 +16,10 @@ public class DictionaryTest
         String pizza = "pizza";
 
         //when
-        boolean word = dictionary.isWord(pizza, "/Users/mindy 1/Documents/Touro/2020 - Spring/Gottlieb-MCO152/dictionary.txt");
+        boolean word = dictionary.isWord(pizza, "dictionary.txt");
 
         //then
-        assertEquals(true, word);
+        assertTrue(word);
     }
 
     @Test
@@ -30,10 +30,10 @@ public class DictionaryTest
         String notWord = "jhfdjm";
 
         //when
-        boolean word = dictionary.isWord(notWord, "/Users/mindy 1/Documents/Touro/2020 - Spring/Gottlieb-MCO152/dictionary.txt");
+        boolean word = dictionary.isWord(notWord, "dictionary.txt");
 
         //then
-        assertEquals(false, word);
+        assertFalse(word);
     }
 
     @Test
@@ -44,9 +44,9 @@ public class DictionaryTest
         String upper = "CASTLE";
 
         //when
-        boolean word = dictionary.isWord(upper, "/Users/mindy 1/Documents/Touro/2020 - Spring/Gottlieb-MCO152/dictionary.txt");
+        boolean word = dictionary.isWord(upper, "dictionary.txt");
 
         //then
-        assertEquals(true, word);
+        assertTrue(word);
     }
 }
