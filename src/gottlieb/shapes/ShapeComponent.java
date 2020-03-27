@@ -4,7 +4,29 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ShapeComponent extends JComponent {
+
+    private int rotation = 0;
     private String shape  ="";
+
+    public ShapeComponent()
+    {
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                super.run();
+                while(true) {
+                    repaint();
+                    try {
+                        Thread.sleep(30);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
+        thread.start();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -16,6 +38,10 @@ public class ShapeComponent extends JComponent {
         int centerY = height / 2;
 
         g.translate(centerX, centerY);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.rotate(Math.toRadians(rotation));
+        rotation++;
+
         if (shape.equals("star"))
         {
             drawStar(g);
@@ -33,8 +59,9 @@ public class ShapeComponent extends JComponent {
         }
         else
         {
-            drawNothing();
+            //do nothing
         }
+
     }
 
     private void drawStar(Graphics g)
@@ -49,7 +76,7 @@ public class ShapeComponent extends JComponent {
     public void setShapeStar()
     {
         shape = "star";
-        repaint();
+//        repaint();
     }
 
     private void drawHouse(Graphics g)
