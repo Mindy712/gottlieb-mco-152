@@ -7,20 +7,20 @@ import java.util.Scanner;
 
 public class Dictionary
 {
-    ArrayList<String> words = new ArrayList();
-    public boolean isWord(String word, String filepath) throws FileNotFoundException {
+    ArrayList<String> words = new ArrayList<String>();
+    public boolean isWord(String word) throws FileNotFoundException {
         if (words.isEmpty())
         {
-            loadFile(filepath);
+            loadFile("dictionary.txt");
         }
-        for (String compare : words)
+        if (words.contains(word.toUpperCase()))
         {
-            if (compare.equalsIgnoreCase(word))
-            {
-                return true;
-            }
+            return true;
         }
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
     private void loadFile(String filepath) throws FileNotFoundException

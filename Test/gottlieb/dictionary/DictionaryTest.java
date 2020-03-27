@@ -16,7 +16,7 @@ public class DictionaryTest
         String pizza = "pizza";
 
         //when
-        boolean word = dictionary.isWord(pizza, "dictionary.txt");
+        boolean word = dictionary.isWord(pizza);
 
         //then
         assertTrue(word);
@@ -30,7 +30,7 @@ public class DictionaryTest
         String notWord = "jhfdjm";
 
         //when
-        boolean word = dictionary.isWord(notWord, "dictionary.txt");
+        boolean word = dictionary.isWord(notWord);
 
         //then
         assertFalse(word);
@@ -44,7 +44,7 @@ public class DictionaryTest
         String upper = "CASTLE";
 
         //when
-        boolean word = dictionary.isWord(upper, "dictionary.txt");
+        boolean word = dictionary.isWord(upper);
 
         //then
         assertTrue(word);
