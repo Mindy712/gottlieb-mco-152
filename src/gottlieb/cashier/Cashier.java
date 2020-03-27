@@ -6,8 +6,6 @@ public class Cashier
 
     public Cash pay(double price, Cash payment) throws NotEnoughChangeException
     {
-        updateRegister(payment);
-
         double paid = calculatePayment(payment);
 
         Cash change = new Cash();
@@ -105,6 +103,7 @@ public class Cashier
             throw new NotEnoughChangeException();
         }
 
+        updateRegister(payment);
         return change;
     }
 
