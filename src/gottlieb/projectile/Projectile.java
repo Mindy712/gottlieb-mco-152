@@ -14,14 +14,14 @@ public class Projectile
 
     public double getX()
     {
-        double x = velocity * Math.cos(angle) * time;
-        return x;
+        return velocity * Math.cos(angle) * time;
+
     }
 
     public double getY()
     {
-        double y = velocity * Math.sin(angle) * time + (EARTH_GRAVITY * time * time);
-        return y;
+        return velocity * Math.sin(angle) * time + (EARTH_GRAVITY * time * time);
+
     }
 
     public double increaseTime(int delta)
