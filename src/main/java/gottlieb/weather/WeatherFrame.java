@@ -1,20 +1,25 @@
 package gottlieb.weather;
 
-import com.google.gson.Gson;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class WeatherFrame extends JFrame {
     private static String userZip = "10901";
 
-    CurrentWeather currentWeather = getData();
+    {
+        try {
+            getData(userZip);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private JLabel chooseLocationLabel;
     private JTextField zipcode;
@@ -50,20 +55,13 @@ public class WeatherFrame extends JFrame {
         chooseLocationFrame.add(zipcode);
         enterZip = new JButton("Get Weather");
         chooseLocationFrame.add(enterZip);
-        enterZip.addActionListener(actionEvent ->
-        {
-            try {
-                userZip = zipcode.getText();
-                currentWeather = WeatherFrame.getData();
-                location.setText(currentWeather.name);
-                temp.setText(String.valueOf(currentWeather.main.temp) + " F");
-                precip.setText(currentWeather.weather[0].main);
-                description.setText(currentWeather.weather[0].description);
-                feelsLike.setText(String.valueOf(currentWeather.main.feels_like) + " F");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        enterZip.addActionListener(actionEvent -> {
+                    try {
+                        getData(userZip = zipcode.getText());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
 
 
         JPanel displayLocation = new JPanel();
@@ -71,7 +69,7 @@ public class WeatherFrame extends JFrame {
 
         locationLabel = new JLabel("Location: ");
         displayLocation.add(locationLabel);
-        location = new JLabel(currentWeather.name);
+        location = new JLabel();
         displayLocation.add(location);
 
 
@@ -80,7 +78,7 @@ public class WeatherFrame extends JFrame {
 
         tempLabel = new JLabel("Temperature: ");
         tempPanel.add(tempLabel);
-        temp = new JLabel(String.valueOf(currentWeather.main.temp) + " F");
+        temp = new JLabel();
         tempPanel.add(temp);
 
 
@@ -89,36 +87,48 @@ public class WeatherFrame extends JFrame {
 
         feelsLikeLabel = new JLabel("Feels like: ");
         feelsLikePanel.add(feelsLikeLabel);
-        feelsLike = new JLabel(String.valueOf(currentWeather.main.feels_like) + " F");
+        feelsLike = new JLabel();
         feelsLikePanel.add(feelsLike);
 
 
         JPanel precipPanel = new JPanel();
         locationFrame.add(precipPanel);
 
-        precip = new JLabel(currentWeather.weather[0].main);
+        precip = new JLabel();
         precipPanel.add(precip);
 
 
         JPanel descriptPanel = new JPanel();
         locationFrame.add(descriptPanel);
 
-        description = new JLabel(currentWeather.weather[0].description);
+        description = new JLabel();
         descriptPanel.add(description);
     }
 
-    private static CurrentWeather getData() throws IOException {
-        String urlString = "https://api.openweathermap.org/data/2.5/weather?zip=" +
-                userZip + "&appid=01c14db89e0dee38c1ff0dc55c46bab7&units=imperial";
-        URL url = new URL(urlString);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    private void getData(String zip) throws IOException {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.openweathermap.org/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-        InputStream in = connection.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        WeatherService service = retrofit.create(WeatherService.class);
 
-        Gson gson = new Gson();
-        return gson.fromJson(reader, CurrentWeather.class);
+        service.getWeather(zip).enqueue(new Callback<CurrentWeather>() {
+            @Override
+            public void onResponse(Call<CurrentWeather> call, Response<CurrentWeather> response) {
+                CurrentWeather currentWeather = response.body();
+                location.setText(currentWeather.name);
+                temp.setText(currentWeather.main.temp + " F");
+                feelsLike.setText(currentWeather.main.feels_like + " F");
+                precip.setText(currentWeather.weather[0].main);
+                description.setText(currentWeather.weather[0].description);
+            }
 
+            @Override
+            public void onFailure(Call<CurrentWeather> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     public static void main(String[] args) throws IOException{

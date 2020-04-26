@@ -1,30 +1,35 @@
 package gottlieb.weather;
 
-import com.google.gson.Gson;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class GetCurrentWeather
 {
     public static void main(String[] args) throws IOException {
-        URL url = new URL("https://api.openweathermap.org/data/2.5/weather?zip=10901&appid=01c14db89e0dee38c1ff0dc55c46bab7&units=imperial");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        InputStream in = connection.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.openweathermap.org/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
-        Gson gson = new Gson();
-        CurrentWeather currentWeather = gson.fromJson(reader, CurrentWeather.class);
+        WeatherService service = retrofit.create(WeatherService.class);
 
-        System.out.println(currentWeather.name);
-        System.out.println(currentWeather.main.temp);
-        System.out.println(currentWeather.weather.toString());
+        service.getWeather("10901").enqueue(new Callback<CurrentWeather>() {
+            @Override
+            public void onResponse(Call<CurrentWeather> call, Response<CurrentWeather> response) {
+                CurrentWeather currentWeather = response.body();
+                System.out.println(currentWeather.name);
+            }
 
+            @Override
+            public void onFailure(Call<CurrentWeather> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
-
 }
